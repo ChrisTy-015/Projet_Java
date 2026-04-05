@@ -41,6 +41,12 @@ import app.model.TestJeu;
 import app.model.Testeur;
 import app.model.VoteUtilite;
 
+/**
+ * Interface graphique principale de la plateforme.
+ * <p>
+ * Cette classe construit une interface Swing qui expose les principales
+ * fonctionnalites metier du projet.
+ */
 public class ApplicationGraphique {
     private final Plateforme plateforme;
     private final String msgCatalogue;
@@ -52,6 +58,11 @@ public class ApplicationGraphique {
     private JPanel panneauActions;
     private JTextArea sortie;
 
+    /**
+     * Cree l'application graphique et charge les donnees initiales.
+     *
+     * @param args arguments de lancement eventuels
+     */
     public ApplicationGraphique(String[] args) {
         InitialiseurPlateforme.DonneesInitiales init = InitialiseurPlateforme.charger(args);
         this.plateforme = init.plateforme();
@@ -59,6 +70,9 @@ public class ApplicationGraphique {
         this.msgComptes = init.msgComptes();
     }
 
+    /**
+     * Lance l'interface graphique.
+     */
     public void lancer() {
         SwingUtilities.invokeLater(this::creerFenetre);
     }

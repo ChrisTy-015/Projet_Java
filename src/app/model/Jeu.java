@@ -5,8 +5,20 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Represente un jeu video reference dans le catalogue.
+ * <p>
+ * Un jeu peut exister sur plusieurs supports et centralise
+ * les regles metier de publication des evaluations et des tests.
+ */
 public class Jeu {
+    /**
+     * Temps minimal de jeu requis pour publier une evaluation.
+     */
     public static final int DUREE_MINIMALE_EVALUATION_HEURES = 1;
+    /**
+     * Temps minimal de jeu requis pour publier un test.
+     */
     public static final int DUREE_MINIMALE_TEST_HEURES = 1;
 
     private final String nom;
@@ -15,6 +27,14 @@ public class Jeu {
     private final String rating;
     private final List<SupportJeu> listeSupports;
 
+    /**
+     * Cree un jeu.
+     *
+     * @param nom nom du jeu
+     * @param categorie categorie du jeu
+     * @param editeur editeur du jeu
+     * @param rating classification age
+     */
     public Jeu(String nom, String categorie, String editeur, String rating) {
         this.nom = Objects.requireNonNull(nom, "Le nom ne peut pas etre null").trim();
         this.categorie = Objects.requireNonNull(categorie, "La categorie ne peut pas etre null").trim();
@@ -23,22 +43,47 @@ public class Jeu {
         this.listeSupports = new ArrayList<>();
     }
 
+    /**
+     * Retourne le nom du jeu.
+     *
+     * @return nom du jeu
+     */
     public String getNom() {
         return nom;
     }
 
+    /**
+     * Retourne la categorie du jeu.
+     *
+     * @return categorie du jeu
+     */
     public String getCategorie() {
         return categorie;
     }
 
+    /**
+     * Retourne l'editeur du jeu.
+     *
+     * @return editeur du jeu
+     */
     public String getEditeur() {
         return editeur;
     }
 
+    /**
+     * Retourne la classification age du jeu.
+     *
+     * @return rating du jeu
+     */
     public String getRating() {
         return rating;
     }
 
+    /**
+     * Ajoute un support au jeu.
+     *
+     * @param support support a associer
+     */
     public void ajouterSupport(SupportJeu support) {
         if (support == null) {
             throw new IllegalArgumentException("Le support de jeu ne peut pas etre null");
@@ -48,10 +93,21 @@ public class Jeu {
         }
     }
 
+    /**
+     * Retourne la liste des supports associes au jeu.
+     *
+     * @return liste non modifiable des supports
+     */
     public List<SupportJeu> getListeSupports() {
         return Collections.unmodifiableList(listeSupports);
     }
 
+    /**
+     * Recherche un support par nom de plateforme.
+     *
+     * @param plateforme nom de la plateforme
+     * @return support correspondant ou {@code null}
+     */
     public SupportJeu trouverSupport(String plateforme) {
         if (plateforme == null) {
             return null;
@@ -64,6 +120,12 @@ public class Jeu {
         return null;
     }
 
+    /**
+     * Ajoute une evaluation a l'un des supports du jeu
+     * apres verification des preconditions metier.
+     *
+     * @param evaluation evaluation a publier
+     */
     public void ajouterEvaluation(Evaluation evaluation) {
         if (evaluation == null) {
             throw new IllegalArgumentException("L'evaluation ne peut pas etre null");
@@ -76,6 +138,12 @@ public class Jeu {
         evaluation.getAuteur().ajouterEvaluation(evaluation);
     }
 
+    /**
+     * Ajoute un test a l'un des supports du jeu
+     * apres verification des preconditions metier.
+     *
+     * @param test test a publier
+     */
     public void ajouterTest(TestJeu test) {
         if (test == null) {
             throw new IllegalArgumentException("Le test ne peut pas etre null");

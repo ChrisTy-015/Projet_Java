@@ -6,6 +6,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * Structure immuable des informations complementaires d'un test.
+ *
+ * @param notesParCategorie notes generales par categorie
+ * @param pointsForts points forts du jeu
+ * @param pointsFaibles points faibles du jeu
+ * @param conditionsTest conditions dans lesquelles le test a ete realise
+ * @param jeuxSimilaires jeux similaires recommandes
+ * @param notesSpecifiquesAuGenre notes propres au genre du jeu
+ */
 public record StructureTestJeu(
         Map<String, Integer> notesParCategorie,
         List<String> pointsForts,
@@ -14,6 +24,9 @@ public record StructureTestJeu(
         List<String> jeuxSimilaires,
         Map<String, Integer> notesSpecifiquesAuGenre
 ) {
+    /**
+     * Valide et normalise la structure immuable d'un test.
+     */
     public StructureTestJeu {
         notesParCategorie = copierNotes(notesParCategorie, "Les notes par categorie");
         if (notesParCategorie.isEmpty()) {

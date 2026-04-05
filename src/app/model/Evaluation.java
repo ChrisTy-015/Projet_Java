@@ -5,6 +5,12 @@ import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 
+/**
+ * Represente une evaluation publiee par un joueur pour un support de jeu.
+ * <p>
+ * Une evaluation peut recevoir des votes d'utilite, etre signalee
+ * et etre marquee comme supprimee.
+ */
 public class Evaluation {
     private Joueur auteur;
     private final SupportJeu support;
@@ -19,6 +25,16 @@ public class Evaluation {
     private boolean supprimee;
     private final Set<String> votants;
 
+    /**
+     * Cree une evaluation.
+     *
+     * @param auteur auteur de l'evaluation
+     * @param support support evalue
+     * @param date date de publication
+     * @param texte texte de l'evaluation
+     * @param version version ou build evaluee
+     * @param note note globale sur 10
+     */
     public Evaluation(Joueur auteur, SupportJeu support, LocalDate date, String texte, String version, double note) {
         this.auteur = Objects.requireNonNull(auteur, "L'auteur ne peut pas etre null");
         this.support = Objects.requireNonNull(support, "Le support de jeu ne peut pas etre null");
@@ -37,6 +53,11 @@ public class Evaluation {
         this.votants = new LinkedHashSet<>();
     }
 
+    /**
+     * Retourne l'auteur de l'evaluation.
+     *
+     * @return auteur de l'evaluation
+     */
     public Joueur getAuteur() {
         return auteur;
     }
@@ -45,51 +66,107 @@ public class Evaluation {
         this.auteur = Objects.requireNonNull(auteur, "L'auteur ne peut pas etre null");
     }
 
+    /**
+     * Retourne le support evalue.
+     *
+     * @return support associe
+     */
     public SupportJeu getSupportJeu() {
         return support;
     }
 
+    /**
+     * Retourne la date de publication.
+     *
+     * @return date de publication
+     */
     public LocalDate getDate() {
         return date;
     }
 
+    /**
+     * Retourne le texte libre de l'evaluation.
+     *
+     * @return texte de l'evaluation
+     */
     public String getTexte() {
         return texte;
     }
 
+    /**
+     * Retourne la version ou le build de jeu evalue.
+     *
+     * @return version ou build
+     */
     public String getVersionBuild() {
         return version;
     }
 
+    /**
+     * Retourne la note globale sur 10.
+     *
+     * @return note globale
+     */
     public double getNoteGlobale() {
         return note;
     }
 
+    /**
+     * Retourne le nombre de votes positifs.
+     *
+     * @return nombre de votes positifs
+     */
     public int getVotesPositifs() {
         return positifs;
     }
 
+    /**
+     * Retourne le nombre de votes neutres.
+     *
+     * @return nombre de votes neutres
+     */
     public int getVotesNeutres() {
         return neutres;
     }
 
+    /**
+     * Retourne le nombre de votes negatifs.
+     *
+     * @return nombre de votes negatifs
+     */
     public int getVotesNegatifs() {
         return negatifs;
     }
 
+    /**
+     * Enregistre un vote positif et met a jour les recompenses eventuelles
+     * de l'auteur.
+     */
     public void voterPositif() {
         positifs++;
         auteur.notifierVotePositifRecu();
     }
 
+    /**
+     * Enregistre un vote neutre.
+     */
     public void voterNeutre() {
         neutres++;
     }
 
+    /**
+     * Enregistre un vote negatif.
+     */
     public void voterNegatif() {
         negatifs++;
     }
 
+    /**
+     * Enregistre un vote d'utilite pour cette evaluation.
+     *
+     * @param votant membre qui vote
+     * @param vote type de vote enregistre
+     */
     public void voter(Membre votant, VoteUtilite vote) {
         Objects.requireNonNull(votant, "Le votant ne peut pas etre null");
         Objects.requireNonNull(vote, "Le vote ne peut pas etre null");
@@ -112,22 +189,44 @@ public class Evaluation {
         }
     }
 
+    /**
+     * Indique si l'evaluation a ete signalee.
+     *
+     * @return {@code true} si l'evaluation est signalee
+     */
     public boolean estSignalee() {
         return signalee;
     }
 
+    /**
+     * Marque l'evaluation comme signalee.
+     */
     public void signaler() {
         signalee = true;
     }
 
+    /**
+     * Indique si l'evaluation a ete marquee comme supprimee.
+     *
+     * @return {@code true} si l'evaluation est supprimee
+     */
     public boolean estSupprimee() {
         return supprimee;
     }
 
+    /**
+     * Marque l'evaluation comme supprimee.
+     */
     public void supprimer() {
         supprimee = true;
     }
 
+    /**
+     * Retourne le score d'utilite, calcule comme la difference
+     * entre votes positifs et votes negatifs.
+     *
+     * @return score d'utilite
+     */
     public int getScoreUtilite() {
         return positifs - negatifs;
     }

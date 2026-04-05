@@ -14,10 +14,27 @@ import app.model.SupportJeu;
 import app.model.Testeur;
 import app.model.VoteUtilite;
 
+/**
+ * Prepare la plateforme au demarrage a partir d'un catalogue CSV ou,
+ * en secours, d'un jeu de donnees de demonstration.
+ */
 public final class InitialiseurPlateforme {
+    /**
+     * Constructeur prive d'une classe utilitaire.
+     */
     private InitialiseurPlateforme() {
     }
 
+    /**
+     * Charge les donnees initiales de l'application.
+     * <p>
+     * La source est choisie selon l'ordre suivant :
+     * un argument explicite, un fichier local standard, l'URL CSV par defaut,
+     * puis un catalogue de demonstration en cas d'echec.
+     *
+     * @param args arguments fournis a l'application
+     * @return la plateforme initialisee ainsi que les messages de contexte associes
+     */
     public static DonneesInitiales charger(String[] args) {
         ChargeurCsv chargeur = new ChargeurCsv();
 
@@ -29,6 +46,17 @@ public final class InitialiseurPlateforme {
             if (Files.exists(chemin)) {
                 return chargerDepuisSource(chargeur, chemin.toString());
             }
+        }
+
+        try {
+            Plateforme plateforme = chargeur.chargerDepuisRessource("vg_data.csv");
+            return new DonneesInitiales(
+                    plateforme,
+                    "Catalogue charge depuis la ressource embarquee vg_data.csv.",
+                    "Compte initial : admin (administrateur). Inscrivez ensuite des membres depuis l'application."
+            );
+        } catch (IOException e) {
+            // Passage a la source distante par defaut.
         }
 
         try {
@@ -137,6 +165,14 @@ public final class InitialiseurPlateforme {
         return plateforme;
     }
 
+    /**
+     * Regroupe la plateforme initialisee et les messages d'information
+     * affiches au demarrage.
+     *
+     * @param plateforme plateforme initialisee
+     * @param msgCatalogue message de provenance du catalogue
+     * @param msgComptes message sur les comptes disponibles
+     */
     public record DonneesInitiales(
             Plateforme plateforme,
             String msgCatalogue,

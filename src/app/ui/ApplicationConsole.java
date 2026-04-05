@@ -25,6 +25,12 @@ import app.model.TestJeu;
 import app.model.Testeur;
 import app.model.VoteUtilite;
 
+/**
+ * Interface console de la plateforme.
+ * <p>
+ * Elle expose les memes regles metier que l'interface graphique
+ * via un menu textuel interactif.
+ */
 public class ApplicationConsole {
     private final Plateforme plateforme;
     private final String msgCatalogue;
@@ -32,10 +38,18 @@ public class ApplicationConsole {
     private final Scanner scanner;
     private boolean quitter;
 
+    /**
+     * Cree l'application console avec la configuration par defaut.
+     */
     public ApplicationConsole() {
         this(new String[0]);
     }
 
+    /**
+     * Cree l'application console et charge les donnees initiales.
+     *
+     * @param args arguments de lancement eventuels
+     */
     public ApplicationConsole(String[] args) {
         Initialisation init = initialiserPlateforme(args);
         this.plateforme = init.plateforme();
@@ -45,6 +59,9 @@ public class ApplicationConsole {
         this.quitter = false;
     }
 
+    /**
+     * Lance la boucle principale de l'application console.
+     */
     public void lancer() {
         afficherAccueil();
         while (!quitter) {
