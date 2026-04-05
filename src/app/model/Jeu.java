@@ -1,0 +1,141 @@
+package app.model;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+
+public class Jeu {
+    public static final int DUREE_MINIMALE_EVALUATION_HEURES = 1;
+    public static final int DUREE_MINIMALE_TEST_HEURES = 1;
+
+    private final String nom;
+    private final String categorie;
+    private final String editeur;
+    private final String rating;
+    private final List<SupportJeu> listeSupports;
+
+    public Jeu(String nom, String categorie, String editeur, String rating) {
+        this.nom = Objects.requireNonNull(nom, "Le nom ne peut pas etre null").trim();
+        this.categorie = Objects.requireNonNull(categorie, "La categorie ne peut pas etre null").trim();
+        this.editeur = Objects.requireNonNull(editeur, "L'editeur ne peut pas etre null").trim();
+        this.rating = Objects.requireNonNull(rating, "Le rating ne peut pas etre null").trim();
+        this.listeSupports = new ArrayList<>();
+    }
+
+    public String getNom() {
+        return nom;
+    }
+
+    public String getCategorie() {
+        return categorie;
+    }
+
+    public String getEditeur() {
+        return editeur;
+    }
+
+    public String getRating() {
+        return rating;
+    }
+
+    public void ajouterSupport(SupportJeu support) {
+        if (support == null) {
+            throw new IllegalArgumentException("Le support de jeu ne peut pas etre null");
+        }
+        if (!listeSupports.contains(support)) {
+            listeSupports.add(support);
+        }
+    }
+
+    public List<SupportJeu> getListeSupports() {
+        return Collections.unmodifiableList(listeSupports);
+    }
+
+    public SupportJeu trouverSupport(String plateforme) {
+        if (plateforme == null) {
+            return null;
+        }
+        for (SupportJeu support : listeSupports) {
+            if (support.getPlateforme().equalsIgnoreCase(plateforme.trim())) {
+                return support;
+            }
+        }
+        return null;
+    }
+
+    public void ajouterEvaluation(Evaluation evaluation) {
+        if (evaluation == null) {
+            throw new IllegalArgumentException("L'evaluation ne peut pas etre null");
+        }
+        SupportJeu support = evaluation.getSupportJeu();
+        verifierSupport(support);
+        verifierEvaluation(evaluation.getAuteur(), support);
+        verifierEvaluationUnique(evaluation.getAuteur(), support);
+        support.ajouterEvaluation(evaluation);
+        evaluation.getAuteur().ajouterEvaluation(evaluation);
+    }
+
+    public void ajouterTest(TestJeu test) {
+        if (test == null) {
+            throw new IllegalArgumentException("Le test ne peut pas etre null");
+        }
+        SupportJeu support = test.getSupportJeu();
+        verifierSupport(support);
+        verifierTest(test.getAuteur(), support);
+        support.ajouterTest(test);
+        test.getAuteur().ajouterTest(test);
+        test.getAuteur().ajouterJetons(5);
+        support.libererTousLesJetons();
+    }
+
+    private void verifierEvaluation(Joueur auteur, SupportJeu support) {
+        if (!auteur.possedeJeu(support)) {
+            throw new IllegalArgumentException("Le joueur doit posseder ce support pour l'evaluer");
+        }
+        if (auteur.getTempsDeJeu(support) < DUREE_MINIMALE_EVALUATION_HEURES) {
+            throw new IllegalArgumentException(
+                    "Le joueur doit avoir joue au moins " + DUREE_MINIMALE_EVALUATION_HEURES + " heure(s) pour evaluer ce support"
+            );
+        }
+    }
+
+    private void verifierEvaluationUnique(Joueur auteur, SupportJeu support) {
+        for (Evaluation evaluation : support.getEvaluations()) {
+            if (evaluation.getAuteur().getPseudo().equalsIgnoreCase(auteur.getPseudo())) {
+                throw new IllegalStateException("Ce joueur a deja publie une evaluation pour ce support");
+            }
+        }
+    }
+
+    private void verifierTest(Testeur auteur, SupportJeu support) {
+        if (!auteur.possedeJeu(support)) {
+            throw new IllegalArgumentException("Le testeur doit posseder ce support pour publier un test");
+        }
+        if (auteur.getTempsDeJeu(support) < DUREE_MINIMALE_TEST_HEURES) {
+            throw new IllegalArgumentException(
+                    "Le testeur doit avoir joue au moins " + DUREE_MINIMALE_TEST_HEURES + " heure(s) pour publier un test"
+            );
+        }
+        if (support.getTotalJetons() <= 0) {
+            throw new IllegalStateException("Aucun jeton n'est place sur ce support");
+        }
+    }
+
+    private void verifierSupport(SupportJeu support) {
+        if (support == null || support.getJeu() != this || !listeSupports.contains(support)) {
+            throw new IllegalArgumentException("Ce support n'appartient pas a ce jeu");
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "Jeu{" +
+                "nom='" + nom + '\'' +
+                ", categorie='" + categorie + '\'' +
+                ", editeur='" + editeur + '\'' +
+                ", rating='" + rating + '\'' +
+                ", supports=" + listeSupports.size() +
+                '}';
+    }
+}
